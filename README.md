@@ -1,4 +1,4 @@
-# telefoons-shop
+# Telefoons Shop
 
 ## Project setup
 ```
