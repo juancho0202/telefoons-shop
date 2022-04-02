@@ -7,14 +7,23 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { mapMutations } from 'vuex';
 import ProductPropertyFilter from '@/components/common/ProductPropertyFilter.vue';
+import getPhoneFeed from '@/services/phone-feed-service';
 
 @Component({
   components: {
     ProductPropertyFilter,
   },
+  methods: {
+    ...mapMutations({
+      setProducts: 'setProducts',
+    }),
+  },
 })
 export default class App extends Vue {
+  declare setProducts: (products: Array<any>)=>void;
+
   public filterOptionsTest = [
     {
       name: 'Apple',
@@ -29,6 +38,13 @@ export default class App extends Vue {
       active: false,
     },
   ]
+
+  public async beforeMount(): Promise<void> {
+    const feed = await getPhoneFeed();
+    if (feed) this.setProducts(feed.products);
+    // eslint-disable-next-line no-debugger
+    debugger;
+  }
 
   public toggleFilter(filterOption:string):void{
     this.filterOptionsTest = this.filterOptionsTest.map((opt) => (opt.name === filterOption ? { ...opt, active: !opt.active } : opt));
