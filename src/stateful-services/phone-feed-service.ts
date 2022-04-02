@@ -67,7 +67,23 @@ export const filtersComputed = {
 };
 
 function activeBrandFilters(): Array<FilterOptionModel> {
-  return phonesState.brandsList.filter((brand) => brand.active);
+  return phonesState.brandsList.filter((filter) => filter.active);
+}
+
+function activehas5gFilters(): Array<FilterOptionModel> {
+  return phonesState.has5gOptionsList.filter((filter) => filter.active);
+}
+
+function activeOSFilters(): Array<FilterOptionModel> {
+  return phonesState.operatingSystemList.filter((filter) => filter.active);
+}
+
+function activeESimFilters(): Array<FilterOptionModel> {
+  return phonesState.hasESimOptionsList.filter((filter) => filter.active);
+}
+
+function activeRefurbishedFilters(): Array<FilterOptionModel> {
+  return phonesState.isRefurbishedOptionsList.filter((filter) => filter.active);
 }
 
 export const phonesComputed = {
@@ -81,10 +97,24 @@ export const phonesComputed = {
             if (!activeBrands.some((brand) => brand.name === product.manufacturer)) return false;
           }
           // Has 5G Filter
-          // const activeBrands = activeBrandFilters();
-          // if (activeBrands.length > 0) {
-          //   if (!activeBrands.some((brand) => brand.name === product.manufacturer)) return false;
-          // }
+          const active5g = activehas5gFilters();
+          if (active5g.length === 1) {
+            if (active5g[0].name !== (product.has_5g ? 'Yes' : 'No')) return false;
+          }
+          // OS Filter
+          const activeOS = activeOSFilters();
+          if (activeOS.length === 1) {
+            if (activeOS[0].name !== product.operating_system) return false;
+          }
+          // Has eSim Filter
+          const activESim = activeESimFilters();
+          if (activESim.length === 1) {
+            if (activESim[0].name !== (product.has_esim ? 'Yes' : 'No')) return false;
+          }
+          const activeRefurbished = activeRefurbishedFilters();
+          if (activeRefurbished.length === 1) {
+            if (activeRefurbished[0].name !== (product.refurbished ? 'Yes' : 'No')) return false;
+          }
           return true;
         },
       );
