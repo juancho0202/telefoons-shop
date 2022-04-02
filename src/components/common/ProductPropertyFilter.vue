@@ -1,7 +1,7 @@
 <template>
-  <div class="dropdown">
+  <div class="btn-group">
     <a
-      class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+      :class="['btn btn-secondary dropdown-toggle', anchorClass]" data-bs-toggle="dropdown"
       href="#" role="button" id="filterButtonLink" aria-expanded="false"
     >
       {{filterPropertyText}}
@@ -39,6 +39,10 @@ import { Component, Vue } from 'vue-property-decorator';
     filterOptions: {
       type: Array,
       default: [],
+    },
+    anchorClass: {
+      type: String,
+      default: '',
     },
   },
 })
