@@ -5,7 +5,6 @@ import Vue from 'vue';
 
 const initialState = {
   products: new Array<ProductModel>(),
-  filteredProducts: new Array<ProductModel>(),
   brandsList: new Array<FilterOptionModel>(),
   operatingSystemList: new Array<FilterOptionModel>(),
   has5gOptionsList: [
@@ -63,6 +62,32 @@ export const filtersComputed = {
     },
     set(value: Array<FilterOptionModel>): void {
       phonesState.isRefurbishedOptionsList = value;
+    },
+  },
+};
+
+function activeBrandFilters(): Array<FilterOptionModel> {
+  return phonesState.brandsList.filter((brand) => brand.active);
+}
+
+export const phonesComputed = {
+  filteredProducts: {
+    get(): Array<ProductModel> {
+      return phonesState.products.filter(
+        (product) => {
+          // Brand Filter
+          const activeBrands = activeBrandFilters();
+          if (activeBrands.length > 0) {
+            if (!activeBrands.some((brand) => brand.name === product.manufacturer)) return false;
+          }
+          // Has 5G Filter
+          // const activeBrands = activeBrandFilters();
+          // if (activeBrands.length > 0) {
+          //   if (!activeBrands.some((brand) => brand.name === product.manufacturer)) return false;
+          // }
+          return true;
+        },
+      );
     },
   },
 };

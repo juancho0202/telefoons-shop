@@ -1,5 +1,5 @@
 <template>
-  <div :class="['alert', variant]" role="alert">
+  <div :class="['alert', variant]" role="alert" :style="{'background-color': bgHexColor?bgHexColor+' !important':''}">
     <slot />
   </div>
 </template>
@@ -13,6 +13,10 @@ import { Component, Vue } from 'vue-property-decorator';
     variant: {
       type: String,
       default: 'alert-success',
+    },
+    bgHexColor: {
+      type: String,
+      default: null,
     },
   },
 })
