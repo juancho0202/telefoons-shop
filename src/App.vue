@@ -1,20 +1,39 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <ProductPropertyFilter filterPropertyText="Brand" :filterOptions="filterOptionsTest" @toggleFilterOption="toggleFilter"/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
+import ProductPropertyFilter from '@/components/common/ProductPropertyFilter.vue';
 
 @Component({
   components: {
-    HelloWorld,
+    ProductPropertyFilter,
   },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  public filterOptionsTest = [
+    {
+      name: 'Apple',
+      active: false,
+    },
+    {
+      name: 'Samsung',
+      active: false,
+    },
+    {
+      name: 'Xiaomi',
+      active: false,
+    },
+  ]
+
+  public toggleFilter(filterOption:string):void{
+    this.filterOptionsTest = this.filterOptionsTest.map((opt) => (opt.name === filterOption ? { ...opt, active: !opt.active } : opt));
+  }
+}
 </script>
 
 <style>
