@@ -1,7 +1,7 @@
 <template>
   <div class="container overflow-hidden">
     <div class="row gx-5">
-      <PhoneResult class="col-12 col-md-6 col-lg-4 mb-4" v-for="phone in filteredProducts" :key="phone.id" :product="phone" />
+      <PhoneResult class="col-12 col-md-6 col-lg-4 mb-4" v-for="phone in filteredAndSortedProducts" :key="phone.id" :product="phone" />
     </div>
   </div>
 </template>
@@ -19,6 +19,6 @@ import ProductModel from '@/models/product-model';
   computed: { ...phonesComputed },
 })
 export default class PhoneResultsContainer extends Vue {
-  declare filteredProducts: Array<ProductModel>;
+  declare filteredAndSortedProducts: Array<ProductModel>;
 }
 </script>

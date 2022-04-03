@@ -3,9 +3,9 @@ import AttributesModel from './attributes-model';
 export default class ProductModel {
   public id: number | undefined;
 
-  public name: string | undefined;
+  public name = '';
 
-  public manufacturer: string | undefined;
+  public manufacturer = '';
 
   public operating_system: string | undefined;
 

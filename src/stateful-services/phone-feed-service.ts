@@ -19,11 +19,12 @@ const initialState = {
     new FilterOptionModel({ name: 'Yes', active: false }),
     new FilterOptionModel({ name: 'No', active: false }),
   ],
+  sortedBy: '',
 };
 
 const phonesState = Vue.observable(initialState);
 
-export const filtersComputed = {
+export const filtersAndSortComputed = {
   brandsList: {
     get(): Array<FilterOptionModel> {
       return phonesState.brandsList;
@@ -87,9 +88,9 @@ function activeRefurbishedFilters(): Array<FilterOptionModel> {
 }
 
 export const phonesComputed = {
-  filteredProducts: {
+  filteredAndSortedProducts: {
     get(): Array<ProductModel> {
-      return phonesState.products.filter(
+      const filteredPhones = phonesState.products.filter(
         (product) => {
           // Brand Filter
           const activeBrands = activeBrandFilters();
@@ -118,6 +119,26 @@ export const phonesComputed = {
           return true;
         },
       );
+      if (phonesState.sortedBy === '') return filteredPhones;
+      if (phonesState.sortedBy === '1') {
+        return filteredPhones.sort(
+          (productA: ProductModel, productB: ProductModel) => productA.name.localeCompare(productB.name),
+        );
+      }
+      if (phonesState.sortedBy === '2') {
+        return filteredPhones.sort(
+          (productA: ProductModel, productB: ProductModel) => productA.manufacturer.localeCompare(productB.manufacturer),
+        );
+      }
+      if (phonesState.sortedBy === '3') {
+        return filteredPhones.sort(
+          (productA: ProductModel, productB: ProductModel) => {
+            if (productA.attributes?.promotion_label !== null && productA.attributes?.promotion_label !== '' && productA.attributes?.promotion_label?.length !== 0) { return 1; }
+            return -1;
+          },
+        );
+      }
+      return filteredPhones;
     },
   },
 };
@@ -170,4 +191,8 @@ export default async function getPhoneFeed(): Promise<void> {
   }
   const error = 'Failed to retrieve phone_feed.json from server';
   throw new Error(error);
+}
+
+export function setSortingValue(value:string): void {
+  phonesState.sortedBy = value;
 }

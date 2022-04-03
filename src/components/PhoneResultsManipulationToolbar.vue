@@ -8,10 +8,9 @@
       <ProductPropertyFilter filterPropertyText="Refurbished" :filterOptions="hasESimOptionsList" @toggleFilterOption="toggleESimFilter"/>
       <div class="btn-group ms-auto d-flex align-items-center">
         <span class="d-none d-lg-block text-nowrap me-2"><b>Sort by:</b></span>
-        <select class="form-select" aria-label="Default select example">
-          <option value="1">Most sold</option>
-          <option value="2">Newest</option>
-          <option value="3">On Sale</option>
+        <select class="form-select" aria-label="Sort Select" @change="sort($event)" v-model="sortModel">
+          <option value="" disabled> Select a sort criteria</option>
+          <option v-for="option in sortingOptionsList" :key="option.value" :value="option.value">{{option.name}}</option>
         </select>
       </div>
     </div>
@@ -36,22 +35,10 @@
         </div>
         <h4><b>Sort</b></h4>
         <div id="sortOptions" class="text-center">
-          <div class="form-check border border-secondary p-2">
-            <label class="w-100 form-check-label" for="exampleRadios1">
-              <input type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-              Most sold
-            </label>
-          </div>
-          <div class="form-check border border-secondary p-2">
-            <label class="w-100 form-check-label" for="exampleRadios2">
-              <input type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-              Newest
-            </label>
-          </div>
-          <div class="form-check border border-secondary p-2">
-            <label class="w-100 form-check-label" for="exampleRadios3">
-              <input type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
-              On sale
+          <div v-for="option in sortingOptionsList" :key="option.value" class="form-check border border-secondary p-2">
+            <label class="w-100 form-check-label">
+              <input type="radio" :value="option.value" @change="sort($event)" v-model="sortModel">
+              {{option.name}}
             </label>
           </div>
         </div>
@@ -73,14 +60,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import ProductPropertyFilter from '@/components/common/ProductPropertyFilter.vue';
-import { filtersComputed } from '@/stateful-services/phone-feed-service';
+import { filtersAndSortComputed, setSortingValue } from '@/stateful-services/phone-feed-service';
 import FilterOptionModel from '@/models/filter-option-model';
 
 @Component({
   components: {
     ProductPropertyFilter,
   },
-  computed: { ...filtersComputed },
+  computed: { ...filtersAndSortComputed },
 })
 export default class PhoneResultsManipulationToolbar extends Vue {
   declare brandsList: Array<FilterOptionModel>;
@@ -93,7 +80,19 @@ export default class PhoneResultsManipulationToolbar extends Vue {
 
   declare isRefurbishedOptionsList: Array<FilterOptionModel>;
 
-  private colorsList: Array<any> = [];
+  // Sorting options
+
+  private sortModel = '';
+
+  private sortingOptionsList: Array<any> = [
+    { name: 'Phone Name', value: '1' },
+    { name: 'Brand Name', value: '2' },
+    { name: 'Promo First', value: '3' },
+  ];
+
+  public sort(event: any) {
+    setSortingValue(event.target?.value);
+  }
 
   // Clear space for reusability refactor here
 
