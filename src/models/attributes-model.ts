@@ -1,5 +1,5 @@
 export default class AttributesModel {
-  public color_name: string | undefined;
+  public color: string | undefined;
 
   public color_code: string | undefined;
 

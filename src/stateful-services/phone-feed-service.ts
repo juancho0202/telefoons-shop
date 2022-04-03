@@ -1,5 +1,6 @@
 import FilterOptionModel from '@/models/filter-option-model';
 import ProductModel from '@/models/product-model';
+import ColorOptionModel from '@/models/color-option-model';
 import axios from 'axios';
 import Vue from 'vue';
 
@@ -19,6 +20,7 @@ const initialState = {
     new FilterOptionModel({ name: 'Yes', active: false }),
     new FilterOptionModel({ name: 'No', active: false }),
   ],
+  colorOptionsList: new Array<ColorOptionModel>(),
   sortedBy: '',
 };
 
@@ -65,10 +67,22 @@ export const filtersAndSortComputed = {
       phonesState.isRefurbishedOptionsList = value;
     },
   },
+  colorOptionsList: {
+    get(): Array<ColorOptionModel> {
+      return phonesState.colorOptionsList;
+    },
+    set(value: Array<ColorOptionModel>): void {
+      phonesState.colorOptionsList = value;
+    },
+  },
 };
 
 function activeBrandFilters(): Array<FilterOptionModel> {
   return phonesState.brandsList.filter((filter) => filter.active);
+}
+
+function activeColorFilters(): Array<ColorOptionModel> {
+  return phonesState.colorOptionsList.filter((filter) => filter.active);
 }
 
 function activehas5gFilters(): Array<FilterOptionModel> {
@@ -97,6 +111,11 @@ export const phonesComputed = {
           if (activeBrands.length > 0) {
             if (!activeBrands.some((brand) => brand.name === product.manufacturer)) return false;
           }
+          // Color Filter
+          const activeColors = activeColorFilters();
+          if (activeColors.length > 0) {
+            if (!activeColors.some((color) => product.colors?.indexOf(color.name) !== -1)) return false;
+          }
           // Has 5G Filter
           const active5g = activehas5gFilters();
           if (active5g.length === 1) {
@@ -112,6 +131,7 @@ export const phonesComputed = {
           if (activESim.length === 1) {
             if (activESim[0].name !== (product.has_esim ? 'Yes' : 'No')) return false;
           }
+          // Is Refurbished
           const activeRefurbished = activeRefurbishedFilters();
           if (activeRefurbished.length === 1) {
             if (activeRefurbished[0].name !== (product.refurbished ? 'Yes' : 'No')) return false;
@@ -119,7 +139,6 @@ export const phonesComputed = {
           return true;
         },
       );
-      if (phonesState.sortedBy === '') return filteredPhones;
       if (phonesState.sortedBy === '1') {
         return filteredPhones.sort(
           (productA: ProductModel, productB: ProductModel) => productA.name.localeCompare(productB.name),
@@ -132,13 +151,20 @@ export const phonesComputed = {
       }
       if (phonesState.sortedBy === '3') {
         return filteredPhones.sort(
-          (productA: ProductModel, productB: ProductModel) => {
-            if (productA.attributes?.promotion_label !== null && productA.attributes?.promotion_label !== '' && productA.attributes?.promotion_label?.length !== 0) { return 1; }
-            return -1;
-          },
+          (productA: ProductModel, productB: ProductModel) => productB.attributes?.promotion_label?.length || -1,
         );
       }
-      return filteredPhones;
+      return filteredPhones.sort(
+        (productA: ProductModel, productB: ProductModel) => {
+          if (productA.sort_order < productB.sort_order) {
+            return -1;
+          }
+          if (productA.sort_order > productB.sort_order) {
+            return 1;
+          }
+          return 0;
+        },
+      );
     },
   },
 };
@@ -165,13 +191,16 @@ const generateOSList = (products:Array<ProductModel>):Array<FilterOptionModel> =
   [],
 ));
 
-const generateColorsList = (products:Array<ProductModel>):Array<any> => (products.reduce(
-  (colorsList: Array<any>, currentProduct: ProductModel) => {
-    const colorName = currentProduct.attributes?.color_name;
-    const colorHex = currentProduct.attributes?.color_code;
-    if (!colorsList.find((color) => color.name === color)) {
-      colorsList.push({ name: colorName, colorHex, active: false });
-    }
+const generateColorsList = (products:Array<ProductModel>) => (products.reduce<ColorOptionModel[]>(
+  (colorsList: Array<ColorOptionModel>, currentProduct: ProductModel) => {
+    // eslint-disable-next-line no-unused-expressions
+    currentProduct.variants?.forEach((v) => {
+      const name = v.attributes?.color;
+      const color_code = v.attributes?.color_code;
+      if (name && color_code && !colorsList.find((color) => color.name === name)) {
+        colorsList.push({ name, color_code, active: false });
+      }
+    });
     return colorsList;
   },
   [],
@@ -187,6 +216,7 @@ export default async function getPhoneFeed(): Promise<void> {
     phonesState.products = products;
     phonesState.brandsList = generateBrandsList(products);
     phonesState.operatingSystemList = generateOSList(products);
+    phonesState.colorOptionsList = generateColorsList(products);
     return;
   }
   const error = 'Failed to retrieve phone_feed.json from server';

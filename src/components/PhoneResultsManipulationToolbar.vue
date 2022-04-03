@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="d-none d-md-flex">
+    <div class="d-none d-lg-flex">
       <ProductPropertyFilter class="me-2" filterPropertyText="Brand" :filterOptions="brandsList" @toggleFilterOption="toggleBrandFilter"/>
+      <ProductPropertyFilter class="me-2" filterPropertyText="Color" :filterOptions="colorOptionsList" @toggleFilterOption="toggleColorFilter"/>
       <ProductPropertyFilter class="me-2" filterPropertyText="5G" :filterOptions="has5gOptionsList" @toggleFilterOption="toggle5GFilter"/>
       <ProductPropertyFilter class="me-2" filterPropertyText="Operating System" :filterOptions="operatingSystemList" @toggleFilterOption="toggleOSFilter"/>
       <ProductPropertyFilter class="me-2" filterPropertyText="E-sim" :filterOptions="hasESimOptionsList" @toggleFilterOption="toggleESimFilter"/>
@@ -14,7 +15,7 @@
         </select>
       </div>
     </div>
-    <div class="d-md-none d-grid gap-2">
+    <div class="d-lg-none d-grid gap-2">
       <button
         class="btn btn-primary"
         type="button"
@@ -46,6 +47,7 @@
         <h4><b>Filter</b></h4>
         <div class="d-flex flex-column">
           <ProductPropertyFilter anchorClass="w-100" filterPropertyText="Brand" :filterOptions="brandsList" @toggleFilterOption="toggleBrandFilter"/>
+          <ProductPropertyFilter class="me-2" filterPropertyText="Color" :filterOptions="colorOptionsList" @toggleFilterOption="toggleColorFilter"/>
           <ProductPropertyFilter class="mt-2" anchorClass="w-100" filterPropertyText="5G" :filterOptions="has5gOptionsList" @toggleFilterOption="toggle5GFilter"/>
           <ProductPropertyFilter class="mt-2" anchorClass="w-100" filterPropertyText="Operating System" :filterOptions="operatingSystemList" @toggleFilterOption="toggleOSFilter"/>
           <ProductPropertyFilter class="mt-2" anchorClass="w-100" filterPropertyText="E-sim" :filterOptions="hasESimOptionsList" @toggleFilterOption="toggleESimFilter"/>
@@ -62,6 +64,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import ProductPropertyFilter from '@/components/common/ProductPropertyFilter.vue';
 import { filtersAndSortComputed, setSortingValue } from '@/stateful-services/phone-feed-service';
 import FilterOptionModel from '@/models/filter-option-model';
+import ColorOptionModel from '@/models/color-option-model';
 
 @Component({
   components: {
@@ -71,6 +74,8 @@ import FilterOptionModel from '@/models/filter-option-model';
 })
 export default class PhoneResultsManipulationToolbar extends Vue {
   declare brandsList: Array<FilterOptionModel>;
+
+  declare colorOptionsList: Array<ColorOptionModel>;
 
   declare has5gOptionsList: Array<FilterOptionModel>;
 
@@ -98,6 +103,10 @@ export default class PhoneResultsManipulationToolbar extends Vue {
 
   public toggleBrandFilter(optionName: string):void {
     this.brandsList = this.brandsList.map((opt) => (opt.name === optionName ? { ...opt, active: !opt.active } : opt));
+  }
+
+  public toggleColorFilter(optionName: string):void {
+    this.colorOptionsList = this.colorOptionsList.map((opt) => (opt.name === optionName ? { ...opt, active: !opt.active } : opt));
   }
 
   public toggle5GFilter(optionName: string):void {

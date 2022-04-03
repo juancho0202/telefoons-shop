@@ -1,11 +1,13 @@
 import AttributesModel from './attributes-model';
 
 export default class ProductModel {
-  public id: number | undefined;
+  public id = -1;
 
   public name = '';
 
   public manufacturer = '';
+
+  public sort_order = 9999999;
 
   public operating_system: string | undefined;
 
@@ -18,6 +20,8 @@ export default class ProductModel {
   public refurbished: boolean | undefined;
 
   public attributes: AttributesModel | undefined;
+
+  public variants: Array<ProductModel> | undefined;
 
   constructor(init?: Partial<ProductModel>) {
     Object.assign(this, init);
