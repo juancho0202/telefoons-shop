@@ -7,6 +7,8 @@ permissions:
 jobs:
   fossology-license-scan:
     name: Fossology License Scan
+    env: 
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     runs-on: ubuntu-latest
     container:
       image: fossology/fossology:scanner
