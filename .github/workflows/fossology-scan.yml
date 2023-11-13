@@ -1,6 +1,9 @@
 name: License Scan
 on: pull_request
 
+permissions:
+  contents: read
+
 jobs:
   fossology-license-scan:
     name: Fossology License Scan
