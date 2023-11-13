@@ -1,0 +1,26 @@
+name: License Scan
+on: pull_request
+
+jobs:
+  fossology-license-scan:
+    name: Fossology License Scan
+    runs-on: ubuntu-latest
+    container:
+      image: fossology/fossology:scanner
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Fossology run
+        run: /bin/fossologyscanner repo nomos ojo copyright keyword
+        continue-on-error: true
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: scan-result
+          path: ./results
+      
+      - name: Artifact download
+        uses: actions/download-artifact@v3
+        with:
+          name: scan-result
