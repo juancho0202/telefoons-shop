@@ -9,6 +9,7 @@ jobs:
     name: Fossology License Scan
     env: 
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GITHUB_PULL_REQUEST: ${{secrets.GITHUB_PULL_REQUEST}}
     runs-on: ubuntu-latest
     container:
       image: fossology/fossology:scanner
