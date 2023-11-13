@@ -10,6 +10,7 @@ jobs:
     env: 
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GITHUB_PULL_REQUEST: ${{secrets.GITHUB_PULL_REQUEST}}
+      GITHUB_REPO_OWNER: ${{secrets.GITHUB_REPO_OWNER}}
     runs-on: ubuntu-latest
     container:
       image: fossology/fossology:scanner
