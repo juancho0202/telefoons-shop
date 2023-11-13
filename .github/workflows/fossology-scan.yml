@@ -1,0 +1,34 @@
+name: License Scan
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  fossology-license-scan:
+    name: Fossology License Scan
+    env: 
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GITHUB_PULL_REQUEST: ${{secrets.GITHUB_PULL_REQUEST}}
+      GITHUB_REPO_OWNER: ${{secrets.GITHUB_REPO_OWNER}}
+      GITHUB_REPO_URL: ${{secrets.GITHUB_REPO_URL}}
+    runs-on: ubuntu-latest
+    container:
+      image: fossology/fossology:scanner
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Fossology run
+        run: /bin/fossologyscanner nomos ojo
+        continue-on-error: true
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: scan-result
+          path: ./results
+      
+      - name: Artifact download
+        uses: actions/download-artifact@v3
+        with:
+          name: scan-result
